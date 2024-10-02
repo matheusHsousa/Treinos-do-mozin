@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treinos</title>
+    <link rel="icon" type="image/png" href="./Body club logo academia preto e branco.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            margin: 0 5px;
+            border-radius: 5px;
+            background-color: #ffffff;
+            transition: background-color 0.3s;
+        }
+
+        .tab.active {
+            background-color: #ccc;
+        }
+
+        .tab:hover {
+            background-color: #e0e0e0;
+        }
+
+        .exercicio {
+            display: flex;
+            /* Alinha os itens verticalmente */
+            justify-content: space-between;
+            align-content: center;
+            /* Espaça os itens horizontalmente */
+            margin-bottom: 15px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            /* Garante que o container ocupe toda a largura disponível */
+        }
+
+        .exercicio img {
+            width: 50px;
+            /* Defina um tamanho fixo para as imagens */
+            height: 50px;
+            /* Defina uma altura fixa */
+            object-fit: cover;
+            /* Corta a imagem se for maior que o espaço */
+            border-radius: 5px;
+            /* Adiciona borda arredondada às imagens, se desejado */
+        }
+
+
+        .exercicio span {
+            flex-grow: 1;
+            /* Faz com que o texto ocupe o espaço disponível */
+            margin-right: 15px;
+            /* Espaçamento entre o texto e o botão */
+            overflow: hidden;
+            /* Esconde conteúdo que não couber */
+            text-overflow: ellipsis;
+            /* Adiciona reticências se o texto for longo */
+        }
+
+        .exercicio button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            height: 30px;
+            align-items: center;
+            gap: 10px;
+            display: flex;
+        }
+
+        .video-btn {
+            background-color: #007BFF;
+            /* Cor de fundo */
+            color: white;
+            /* Cor do texto */
+            border: none;
+            /* Sem borda */
+            border-radius: 5px;
+            /* Bordas arredondadas */
+            padding: 10px 15px;
+            /* Espaçamento interno */
+            cursor: pointer;
+            /* Cursor de mão ao passar o mouse */
+            transition: background-color 0.3s;
+            /* Transição suave para a cor de fundo */
+            font-size: 16px;
+            /* Tamanho da fonte */
+        }
+
+        .video-btn:hover {
+            background-color: #0056b3;
+            /* Cor de fundo ao passar o mouse */
+        }
+
+
+        .exercicio button:hover {
+            background-color: #0056b3;
+        }
+
+        .exercicio.completed {
+            background-color: #a4e89f;
+        }
+
+
+        .calendar {
+            margin-top: 20px;
+        }
+
+        .calendar input[type="date"] {
+            margin-bottom: 10px;
+        }
+
+        .completed-message {
+            color: green;
+            font-weight: bold;
+            display: none;
+            text-align: center;
+        }
+
+        .concluir-treino {
+            margin-top: 20px;
+            display: none;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        .concluir-treino:hover {
+            background-color: #218838;
+        }
+
+        #treinos-concluidos {
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Dark Mode Styles */
+        .dark-mode {
+            background-color: #333;
+            color: #f8f9fa;
+        }
+
+        .dark-mode h1 {
+            color: #f8f9fa;
+        }
+
+        .dark-mode h2 {
+            color: #f8f9fa;
+        }
+
+        .dark-mode .tab {
+            background-color: #444;
+            border: 1px solid #555;
+        }
+
+        .dark-mode .tab.active {
+            background-color: #666;
+        }
+
+        .dark-mode .exercicio {
+            background-color: #444;
+            box-shadow: none;
+        }
+
+        .dark-mode .exercicio.completed {
+            background-color: #4caf50;
+        }
+
+        .dark-mode .concluir-treino {
+            background-color: #28a745;
+        }
+
+        .dark-mode .concluir-treino:hover {
+            background-color: #218838;
+        }
+
+        .dark-mode button {
+            background-color: #007bff;
+        }
+
+        .dark-mode button:hover {
+            background-color: #0056b3;
+        }
+
+        .expandable {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            /* Centraliza horizontalmente */
+            top: 50%;
+            /* Centraliza verticalmente */
+            transform: translate(-50%, -50%);
+            /* Ajusta a posição para o centro */
+            width: 80%;
+            /* Largura do modal (ajuste conforme necessário) */
+            max-width: 300px;
+            /* Largura máxima para não ficar muito grande */
+            height: auto;
+            /* Altura automática para conteúdo variável */
+            overflow: auto;
+            /* Fundo semitransparente */
+            padding: 20px;
+            /* Padding do modal */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border: 1px solid #888;
+            max-height: 200px;
+            border-radius: 8px;
+        }
+
+        .dark-mode .modal-content {
+            background-color: #353333;
+            padding: 20px;
+            border: 1px solid #888;
+            max-height: 200px;
+            border-radius: 8px;
+        }
+
+        .dark-mode img {
+            mix-blend-mode: multiply;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .expandable {
+            display: none;
+            margin-top: 10px;
+            /* Espaçamento entre a linha principal e o conteúdo expandido */
+            width: 100%;
+            /* Ocupa 100% da largura */
+        }
+
+        #progress-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <i id="darkModeToggle" class="fas fa-moon" style="cursor: pointer; font-size: 22px; margin-top: 20px;"></i>
+
+    <h1>Meus Treinos</h1>
+
+    <div id="treinos-concluidos">Dias Treinados: 0</div>
+    <div class="completed-message">Parabéns! Você completou 28 treinos! Por favor, troque de treino.</div>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="perna">Perna</div>
+        <div class="tab" data-tab="superior">Superior</div>
+    </div>
+
+    <div style="display: flex; justify-content: center; margin-bottom: 30px;">
+        <div id="progress-container" style="position: relative; width: 80px; height: 80px;">
+            <svg width="80" height="80">
+                <circle cx="40" cy="40" r="35" stroke="#ddd" stroke-width="5" fill="none" />
+                <circle id="progress-circle" cx="40" cy="40" r="35" stroke="#4caf50" stroke-width="5" fill="none"
+                    stroke-dasharray="219.91" stroke-dashoffset="219.91" />
+                <!-- Comprimento da circunferência ajustado -->
+            </svg>
+            <div id="completion-percentage"
+                style="position: absolute; top: 31%; left: 31%; font-size: 25px; text-align: center;">
+                0%</div>
+        </div>
+    </div>
+
+    <div id="perna" class="tab-content">
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvswqPhuqXiNpPnDZ5ElCCRYIfW770hHUG2g&s"
+                    alt="Agachamento">
+                <span>Esteira</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>20 minutos</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/lIy1SoRCTCQ">
+                </iframe>
+            </div>
+        </div>
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+
+                <img src="https://static.wixstatic.com/media/2edbed_b4abc457cbf64ad1b6247034586559f5~mv2.png/v1/fill/w_241,h_198,al_c,q_85,enc_auto/2edbed_b4abc457cbf64ad1b6247034586559f5~mv2.png"
+                    alt="Leg Press">
+                <span>Leg Press</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>Séries: 4, Repetições: 12</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/q4W4_VJbKW0">
+                </iframe>
+            </div>
+        </div>
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://apilyfta.com/static/GymvisualPNG/05851101-Lever-Leg-Extension_Thighs_small.png"
+                    alt="Cadeira Extensora">
+                <span>Cadeira Extensora</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>Séries: 4, Repetições: 12</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/qhodv-ebwDw">
+                </iframe>
+            </div>
+        </div>
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://static.wixstatic.com/media/2edbed_327777df377340488fd4821b16882fc8~mv2.png/v1/fill/w_700,h_351,al_c,lg_1,q_85,enc_auto/2edbed_327777df377340488fd4821b16882fc8~mv2.png"
+                    alt="Cadeira Flexora">
+                <span>Cadeira Flexora</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>Séries: 4, Repetições: 12</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/vWqi5uAnEu4">
+                </iframe>
+            </div>
+        </div>
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://static.wixstatic.com/media/2edbed_5229580dd71b4afb9be713a2c5fdad7d~mv2.webp/v1/fill/w_672,h_378,al_c,lg_1,q_80/2edbed_5229580dd71b4afb9be713a2c5fdad7d~mv2.webp"
+                    alt="Abdutora">
+                <span>Abdutora</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>Séries: 4, Repetições: 12</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/YWA8VhZGnZg">
+                </iframe>
+            </div>
+        </div>
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://static.wixstatic.com/media/2edbed_8a612c33a1f649578ade7454653f7f30~mv2.gif"
+                    alt="Abdutora">
+                <span>Adutora</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>Séries: 4, Repetições: 12</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/qUT8i4MVhv8">
+                </iframe>
+            </div>
+        </div>
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://static.wixstatic.com/media/2edbed_2d201a9e80a94bd3976b4aafc48e0e6d~mv2.png/v1/fill/w_241,h_345,al_c,q_85,enc_auto/2edbed_2d201a9e80a94bd3976b4aafc48e0e6d~mv2.png"
+                    alt="Gemêos em pé">
+                <span>Gemêos em pé</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>Séries: 4, Repetições: 15</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/5BeosiUEQgA">
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="superior" class="tab-content" style="display: none;">
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvswqPhuqXiNpPnDZ5ElCCRYIfW770hHUG2g&s"
+                    alt="Agachamento">
+                <span>Esteira</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>20 minutos</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/lIy1SoRCTCQ">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://static.wixstatic.com/media/2edbed_f24fe969015b491e88b8583a37a7b199~mv2.jpg/v1/fill/w_640,h_640,al_c,q_85,enc_auto/2edbed_f24fe969015b491e88b8583a37a7b199~mv2.jpg"
+                    alt="Gemêos em pé">
+                <span>Supino</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>Séries: 4, Repetições: 15</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/e-F32H5SF6E">
+                </iframe>
+            </div>
+        </div>
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://treinomestre.com.br/wp-content/uploads/2021/11/remada-articulada-.jpg"
+                    alt="Gemêos em pé">
+                <span>Remada Maquina</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>Séries: 4, Repetições: 15</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/mWtLSTGH_TQ">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://karoldeliberato.com.br/wp-content/uploads/2023/04/image70.gif" alt="Gemêos em pé">
+                <span>Desenvolvimento ombros</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>Séries: 4, Repetições: 15</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/TDyShg6ejkw">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://static.wixstatic.com/media/2edbed_c7200978721446a7915aa6663aff97a2~mv2.png/v1/fill/w_980,h_763,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/2edbed_c7200978721446a7915aa6663aff97a2~mv2.png"
+                    alt="Gemêos em pé">
+                <span>PullDown</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>Séries: 4, Repetições: 15</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/JGeRYIZdojU">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://maternidadeoctavianoneves.com.br/wp-content/uploads/2023/10/example.gif"
+                    alt="Gemêos em pé">
+                <span>Elevação lateral</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>Séries: 4, Repetições: 15</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/FPB7HvaKUXI">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://static.strengthlevel.com/images/exercises/tricep-rope-pushdown/tricep-rope-pushdown-800.jpg"
+                    alt="Gemêos em pé">
+                <span>Tricepis polia</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>Séries: 4, Repetições: 15</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/TLnIVtuuoYw">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://cdn.shopify.com/s/files/1/0425/7667/4983/files/3_b3a89075-032f-4ee9-af11-39dba5efa88c.png?v=1708941999"
+                    alt="Gemêos em pé">
+                <span>Biceps haltere alternado</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>Séries: 4, Repetições: 15</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/Q-xPyZYn0Cg">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://www.mundoboaforma.com.br/wp-content/uploads/2021/07/triceps-sentado-no-aparelho.gif"
+                    alt="Gemêos em pé">
+                <span>Tricps maquina</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>Séries: 4, Repetições: 15</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/2CSkCiB_NHg">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="exercicio" style="flex-direction: column; ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://static.wixstatic.com/media/2edbed_6505c49ecd634b848d5d0e9418f68fce~mv2.jpg/v1/fill/w_980,h_490,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2edbed_6505c49ecd634b848d5d0e9418f68fce~mv2.jpg"
+                    alt="Gemêos em pé">
+                <span>Biceps polia</span>
+                <button class="complete-btn">Feito</button>
+            </div>
+            <div class="expandable" style="display: none;"> <!-- Abri aqui -->
+                <span>Séries: 4, Repetições: 15</span>
+                <iframe width="98%" height="215" src="https://www.youtube.com/embed/9G5eHUIANz4">
+                </iframe>
+            </div>
+        </div>
+    </div>
+    <button class="concluir-treino" id="concluirTreinoBtn">Concluir Treino</button>
+    <script>
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const completeBtns = document.querySelectorAll('.complete-btn');
+        const concluirTreinoBtn = document.getElementById('concluirTreinoBtn');
+        const completedMessage = document.querySelector('.completed-message');
+        const treinosConcluidosDisplay = document.getElementById('treinos-concluidos');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        const completionPercentageDisplay = document.getElementById('completion-percentage'); // Adicionado para exibir porcentagem
+
+        // Ensure videoButtons is declared only once in the global scope or within a specific function.
+        let videoButtons; // Use let if you might need to reassign or declare it in a different scope.
+
+        function initializeVideoButtons() {
+            videoButtons = document.querySelectorAll('.video-btn');
+            videoButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    // Event handling logic
+                });
+            });
+        }
+
+        // Call the function to initialize video buttons
+        initializeVideoButtons();
+
+
+        // Load data from localStorage
+        let treinosConcluidos = JSON.parse(localStorage.getItem('treinosConcluidos')) || 0;
+        let lastCompletedTab = localStorage.getItem('lastCompletedTab') || 'perna';
+
+        treinosConcluidosDisplay.textContent = `Dias Treinados: ${treinosConcluidos}`;
+
+        // Set the active tab based on localStorage
+        const initialTab = lastCompletedTab === 'perna' ? 'superior' : 'perna';
+        setActiveTab(initialTab);
+
+        // Tab navigation
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                tabContents.forEach(content => content.style.display = 'none');
+                document.getElementById(tab.getAttribute('data-tab')).style.display = 'block';
+                checkCompletion();
+            });
+        });
+
+        // Mark exercises as completed
+        // Captura todos os botões de "Feito" após a adição do novo HTML
+
+        completeBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const exercise = e.target.closest('.exercicio'); // Mudança aqui
+                exercise.classList.toggle('completed');
+
+                if (exercise.classList.contains('completed')) {
+                    e.target.textContent = 'Desf.';
+                } else {
+                    e.target.textContent = 'Feito';
+                }
+
+                checkCompletion();
+            });
+        });
+
+
+
+        // Atualiza a função checkCompletion para incluir lógica de posição
+        function checkCompletion() {
+            const activeTab = document.querySelector('.tab-content:not([style*="display: none"])');
+            const exercises = activeTab.querySelectorAll('.exercicio');
+            const allCompleted = Array.from(exercises).every(ex => ex.classList.contains('completed'));
+
+            if (allCompleted) {
+                concluirTreinoBtn.style.display = 'block';
+            } else {
+                concluirTreinoBtn.style.display = 'none';
+            }
+
+            // Calcular a porcentagem de exercícios concluídos
+            const totalExercises = exercises.length;
+            const completedExercises = activeTab.querySelectorAll('.exercicio.completed').length;
+            const completionPercentage = totalExercises > 0 ? (completedExercises / totalExercises) * 100 : 0;
+
+            // Atualizar o texto de porcentagem e a posição
+            const percentageText = Math.round(completionPercentage);
+            const completionPercentageDisplay = document.getElementById('completion-percentage');
+            completionPercentageDisplay.textContent = `${percentageText}%`;
+
+            // Definir posição com base na porcentagem
+            if (percentageText === 0) {
+                completionPercentageDisplay.style.top = '50%'; // Ajustar para 0%
+                completionPercentageDisplay.style.left = '53%'; // Ajustar para 0%
+                completionPercentageDisplay.style.transform = 'translate(-50%, -50%)'; // Centralizar
+            } else if (percentageText === 100) {
+                completionPercentageDisplay.style.top = '49%'; // Ajustar para 100%
+                completionPercentageDisplay.style.left = '50%'; // Ajustar para 100%
+                completionPercentageDisplay.style.transform = 'translate(-50%, -50%)'; // Centralizar
+            } else {
+                completionPercentageDisplay.style.top = '33%'; // Posição padrão
+                completionPercentageDisplay.style.left = '25%'; // Posição padrão
+                completionPercentageDisplay.style.transform = ''; // Remover transformação
+            }
+
+            // Atualizar o círculo de progresso
+            const progressCircle = document.getElementById('progress-circle');
+            const offset = 219.91 - (completionPercentage / 100) * 219.91; // 219.91 é o comprimento da circunferência
+            progressCircle.style.strokeDashoffset = offset;
+
+            // Mudar a cor com base na porcentagem
+            if (completionPercentage < 50) {
+                progressCircle.style.stroke = '#f44336'; // Vermelho
+            } else if (completionPercentage < 80) {
+                progressCircle.style.stroke = '#ff9800'; // Laranja
+            } else {
+                progressCircle.style.stroke = '#4caf50'; // Verde
+            }
+        }
+
+
+
+        // Handle completing a workout
+        concluirTreinoBtn.addEventListener('click', () => {
+            treinosConcluidos++;
+            localStorage.setItem('treinosConcluidos', treinosConcluidos);
+            treinosConcluidosDisplay.textContent = `Treinos Concluídos: ${treinosConcluidos}`;
+
+            // Save the current tab as the last completed
+            const activeTab = document.querySelector('.tab.active').getAttribute('data-tab');
+            localStorage.setItem('lastCompletedTab', activeTab);
+
+            // Switch to the opposite tab
+            switchTab(activeTab);
+
+            // Reset exercises and check total completion
+            resetExercises();
+            checkCompletion();
+            checkTotalCompletion();
+        });
+
+        // Switch tabs based on current active tab
+        function switchTab(currentTab) {
+            const nextTab = currentTab === 'perna' ? 'superior' : 'perna';
+            setActiveTab(nextTab);
+        }
+
+        // Reset all exercises in the current tab
+        function resetExercises() {
+            const activeTab = document.querySelector('.tab-content:not([style*="display: none"])');
+            const exercises = activeTab.querySelectorAll('.exercicio');
+            exercises.forEach(ex => {
+                ex.classList.remove('completed');
+                ex.querySelector('.complete-btn').textContent = '✓';
+            });
+        }
+
+        // Check if 28 trainings have been completed
+        function checkTotalCompletion() {
+            if (treinosConcluidos >= 28) {
+                completedMessage.style.display = 'block';
+            }
+        }
+
+        // Set the active tab based on the last completed tab
+        function setActiveTab(tab) {
+            tabs.forEach(t => {
+                if (t.getAttribute('data-tab') === tab) {
+                    t.classList.add('active');
+                } else {
+                    t.classList.remove('active');
+                }
+            });
+            tabContents.forEach(content => {
+                if (content.id === tab) {
+                    content.style.display = 'block';
+                } else {
+                    content.style.display = 'none';
+                }
+            });
+        }
+
+        // Carregar a escolha de tema do localStorage
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'dark') {
+            body.classList.add('dark-mode');
+            darkModeToggle.classList.remove('fa-moon'); // Remove ícone da lua
+            darkModeToggle.classList.add('fa-sun'); // Adiciona ícone do sol
+        }
+
+        // Toggle dark mode
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                darkModeToggle.classList.remove('fa-moon'); // Remove ícone da lua
+                darkModeToggle.classList.add('fa-sun'); // Adiciona ícone do sol
+                localStorage.setItem('theme', 'dark'); // Salva o tema como escuro
+            } else {
+                darkModeToggle.classList.remove('fa-sun'); // Remove ícone do sol
+                darkModeToggle.classList.add('fa-moon'); // Adiciona ícone da lua
+                localStorage.setItem('theme', 'light'); // Salva o tema como claro
+            }
+        });
+
+        const exercicios = document.querySelectorAll('.exercicio');
+        exercicios.forEach(exercicio => {
+            exercicio.addEventListener('click', (event) => {
+                // Verifica se o alvo do clique não é o botão "Feito"
+                if (!event.target.classList.contains('complete-btn')) {
+                    const expandable = exercicio.querySelector('.expandable');
+                    expandable.style.display = expandable.style.display === 'block' ? 'none' : 'block';
+                    checkCompletion(); // Chama a verificação de conclusão
+                }
+            });
+        });
+
+
+        // Abre o modal para vídeo
+        const modal = document.getElementById("videoModal");
+        const span = document.getElementsByClassName("close")[0];
+
+        videoButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.stopPropagation(); // Impede que o clique no botão do vídeo feche a expansão
+                modal.style.display = "block";
+            });
+        });
+
+        // Fecha o modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const videoBtns = document.querySelectorAll('.video-btn');
+            const modal = document.getElementById('videoModal');
+            const videoIframe = document.getElementById('videoIframe');
+            const closeModal = document.querySelector('.close');
+
+            videoBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const videoUrl = btn.getAttribute('data-video-url');
+                    videoIframe.src = videoUrl; // Carrega o vídeo no iframe
+                    modal.style.display = 'block'; // Exibe o modal
+                });
+            });
+
+            closeModal.addEventListener('click', function () {
+                modal.style.display = 'none'; // Fecha o modal
+                videoIframe.src = ''; // Para o vídeo quando o modal é fechado
+            });
+
+            window.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none'; // Fecha o modal se o fundo for clicado
+                    videoIframe.src = ''; // Para o vídeo
+                }
+            });
+        });
+
+
+        // Initialize the completion check
+        checkCompletion();
+        checkTotalCompletion();
+
+
+    </script>
+</body>
+
+</html>
